@@ -5,8 +5,13 @@ function getRandomHexColor() {
 }
 
 function createBoxes(amount) {
+  if (amount < 1 || amount > 100) return;
+
   const boxesContainer = document.getElementById("boxes");
-  boxesContainer.innerHTML = "";
+  boxesContainer.innerHTML = ""; // Очищаем контейнер перед добавлением новых элементов
+
+  const fragment = document.createDocumentFragment(); // Используем DocumentFragment для оптимизации
+
   for (let i = 0; i < amount; i++) {
     const box = document.createElement("div");
     const size = 30 + i * 10;
@@ -15,13 +20,14 @@ function createBoxes(amount) {
     box.style.backgroundColor = getRandomHexColor();
     box.style.margin = "5px";
 
-    boxesContainer.appendChild(box);
+    fragment.appendChild(box);
   }
+
+  boxesContainer.appendChild(fragment);
 }
 
 function destroyBoxes() {
-  const boxesContainer = document.getElementById("boxes");
-  boxesContainer.innerHTML = "";
+  document.getElementById("boxes").innerHTML = "";
 }
 
 const createButton = document.querySelector("[data-create]");
@@ -31,12 +37,13 @@ const inputField = document.querySelector('input[type="number"]');
 createButton.addEventListener("click", () => {
   const amount = parseInt(inputField.value, 10);
 
-  if (amount >= 1 && amount <= 100) {
-    createBoxes(amount);
-    inputField.value = "";
-  } else {
+  if (isNaN(amount) || amount < 1 || amount > 100) {
     alert("Please enter a number between 1 and 100");
+    return;
   }
+
+  createBoxes(amount);
+  inputField.value = "";
 });
 
 destroyButton.addEventListener("click", destroyBoxes);
